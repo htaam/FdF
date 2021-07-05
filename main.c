@@ -6,7 +6,7 @@
 /*   By: tmatias <tmatias@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 16:57:56 by tmatias           #+#    #+#             */
-/*   Updated: 2021/07/01 18:17:30 by tmatias          ###   ########.fr       */
+/*   Updated: 2021/07/05 15:21:19 by tmatias          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ typedef struct s_data
 	int		line_length;
 	int		endian;
 }				t_data;
+
+typedef struct s_numbers
+{
+	float	z_real;
+	float	z_imaginary;
+	float	c_real;
+	float	c_imaginary;
+	int	x_max;
+	int	y_max;
+}			t_numbers;
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -39,34 +49,47 @@ int	get_distance(int x1, int y1, int x2, int y2)
 
 int	main(void)
 {
-	void	*mlx;
-	void	*mlx_win;
-	t_data	imgage;
-	int		i;
-	int		j;
-	int		c;
+	void		*mlx;
+	void		*mlx_win;
+	t_data		imgage;
+	t_numbers	numbers;
+	int			iteration;
+	float		temp;
 
+	numbers.x_max = 1080;
+	numbers.y_max = 1080;
 	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-	imgage.img = mlx_new_image(mlx, 1920, 1080);
+	mlx_win = mlx_new_window(mlx, numbers.x_max, numbers.y_max, "Hello world!");
+	imgage.img = mlx_new_image(mlx, numbers.x_max, numbers.y_max);
 	imgage.addr = mlx_get_data_addr(imgage.img, &imgage.bits_per_pixel,
 			&imgage.line_length, &imgage.endian);
-	i = 1;
-	while (i < 1920)
+	numbers.c_real = 0 - (numbers.x_max / 2);
+	while (numbers.c_real < numbers.x_max / 2)
 	{
-		j = 1;
-		while (j < 1080)
+		numbers.c_imaginary = 0 - (numbers.y_max / 2);
+		while (numbers.c_imaginary < numbers.y_max / 2)
 		{
-			c = get_distance(500, 500, i, j);
-			if (c >= 200)
-				my_mlx_pixel_put(&imgage, i, j, 0x00FF0000);
-			else
-				my_mlx_pixel_put(&imgage, i, j, 0x00FFFFFF);
-			if (i == j)
-				my_mlx_pixel_put(&imgage, i, j, 0x000F0F0F);
-			j++;
+			numbers.z_real = 0;
+			numbers.z_imaginary = 0;
+			iteration = 0;
+			while (pow(numbers.z_real, 2) + pow(numbers.z_imaginary, 2) < 4
+				&& iteration < 200)
+			{
+				temp = pow(numbers.z_real, 2) - pow(numbers.z_imaginary, 2)
+					+ (numbers.c_real / (numbers.x_max / 2));
+				numbers.z_imaginary = 2 * numbers.z_real * numbers.z_imaginary
+					+ (numbers.c_imaginary / (numbers.y_max / 2));
+				numbers.z_real = temp;
+				iteration++;
+			}
+			if (iteration < 200)
+			{
+				my_mlx_pixel_put(&imgage, numbers.c_real + (numbers.x_max / 2),
+					numbers.c_imaginary + (numbers.y_max / 2), 0x000FFFFF);
+			}
+			numbers.c_imaginary++;
 		}
-		i++;
+		numbers.c_real++;
 	}
 	mlx_put_image_to_window(mlx, mlx_win, imgage.img, 0, 0);
 	mlx_loop(mlx);
