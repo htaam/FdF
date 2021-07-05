@@ -6,7 +6,7 @@
 /*   By: tmatias <tmatias@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 16:57:56 by tmatias           #+#    #+#             */
-/*   Updated: 2021/07/05 15:21:19 by tmatias          ###   ########.fr       */
+/*   Updated: 2021/07/05 18:30:40 by tmatias          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	main(void)
 	int			iteration;
 	float		temp;
 
-	numbers.x_max = 1080;
-	numbers.y_max = 1080;
+	numbers.x_max = 2550;
+	numbers.y_max = 1400;
 	mlx = mlx_init();
 	mlx_win = mlx_new_window(mlx, numbers.x_max, numbers.y_max, "Hello world!");
 	imgage.img = mlx_new_image(mlx, numbers.x_max, numbers.y_max);
@@ -73,19 +73,19 @@ int	main(void)
 			numbers.z_imaginary = 0;
 			iteration = 0;
 			while (pow(numbers.z_real, 2) + pow(numbers.z_imaginary, 2) < 4
-				&& iteration < 200)
+				&& iteration < 500)
 			{
 				temp = pow(numbers.z_real, 2) - pow(numbers.z_imaginary, 2)
-					+ (numbers.c_real / (numbers.x_max / 2));
+					+ (numbers.c_real / (numbers.y_max / 3.5));
 				numbers.z_imaginary = 2 * numbers.z_real * numbers.z_imaginary
-					+ (numbers.c_imaginary / (numbers.y_max / 2));
+					+ (numbers.c_imaginary / (numbers.y_max / 3.5));
 				numbers.z_real = temp;
 				iteration++;
 			}
-			if (iteration < 200)
+			if (iteration < 500)
 			{
 				my_mlx_pixel_put(&imgage, numbers.c_real + (numbers.x_max / 2),
-					numbers.c_imaginary + (numbers.y_max / 2), 0x000FFFFF);
+					numbers.c_imaginary + (numbers.y_max / 2), (0x00000000 + (iteration * 5000)));
 			}
 			numbers.c_imaginary++;
 		}
